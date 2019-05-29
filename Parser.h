@@ -5,7 +5,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "Game.h"
-#include "SPBufferset.h"
 
 /*
  * Ask for number of fixed cells and initialize the board
