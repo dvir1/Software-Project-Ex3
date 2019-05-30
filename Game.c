@@ -1,5 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include "MainAux.h"
+#include "Solver.h"
+
+Cell* board;
+Cell* solution;
+int numOfEmptyCells;
 
 /*
  * print "Exiting...\n" and exit program
@@ -31,4 +38,8 @@ void restart() {
 
 void exitGame() {
 
+}
+
+bool endGame() {
+	return numOfEmptyCells==0;
 }

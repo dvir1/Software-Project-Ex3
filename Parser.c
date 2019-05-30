@@ -35,11 +35,11 @@ void start() {
 	CreateBoard(3, 3, numOfFixed);
 }
 
-enum commandType {
+typedef enum {
 	Set, Hint, Validate, Restart, Exit, Invalid
-};
+} commandType;
 
-enum commandType getCommandType(char* command) {
+commandType getCommandType(char* command) {
 	if (strcmp(command, "set") == 0) {
 		return Set;
 	}
