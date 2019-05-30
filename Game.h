@@ -1,6 +1,8 @@
 #ifndef GAME_H_
 #define GAME_H_
 
+#include <stdbool.h>
+
 /*
  * print "Exiting...\n" and exit program
  */
@@ -17,5 +19,7 @@ void validate();
 void restart();
 
 void exitGame();
+
+bool endGame();
 
 #endif /* GAME_H_ */
