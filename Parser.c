@@ -61,7 +61,7 @@ commandType getCommandType(char* command) {
 /*
  * Read command line from user and execute it
  */
-void getCommand() {
+void getCommand(bool firstCommand) {
 	char *command;
 	char c, line[1024];
 	int x, y, z;
@@ -77,11 +77,15 @@ void getCommand() {
 
 	/* last scanf leaves a \n so we need to read it from the buffer, otherwise fgets won't wait for user command.
 	 * then we have to use c */
-	c = getchar();
-	if (c == '\n')
-		x=0;
+	if (firstCommand==true) {
+		c = getchar();
+		if (c == '\n')
+			x=0;
+		firstCommand=false;
+	}
 	fgets(line, 1024, stdin);
 	command = strtok(line, " ");
+	printf("%s\n", command);
 
 	switch (getCommandType(command)) {
 	case Set:
