@@ -8,6 +8,9 @@
  */
 Cell* boardCellAccess(int x, int y);
 
+/* 
+ * return a pointer to cell <x,y> 
+ */
 Cell* solutionCellAccess(int x, int y);
 
 /*
