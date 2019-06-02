@@ -14,6 +14,6 @@ void start();
 /*
  * Read command line from user and execute it
  */
-void getCommand();
+void getCommand(bool firstCommand);
 
 #endif /* PARSER_H_ */
