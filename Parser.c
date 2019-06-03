@@ -115,16 +115,18 @@ void getCommand(bool firstCommand) {
 #ifdef DEBUG
 		printf("command is Restart\n");
 #endif
-		restart();
+		exitGame();
+		start();
 		break;
 	case Exit:
 #ifdef DEBUG
 		printf("command is Exit\n");
 #endif
 		exitGame();
+		printExitAndExit();
 		break;
 	default:
-		printf("Error: invalid command\n");
+		invalidCommand();
 		break;
 	}
 
