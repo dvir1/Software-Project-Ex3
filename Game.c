@@ -161,7 +161,12 @@ void printBoard(){
 					else {
 						printf(" ");
 					}
-					printf("%d ", cell->value);
+					if (cell->value==0){
+						printf("  ");
+					}
+					else{
+						printf("%d ", cell->value);
+					}
 				}
 			}
 			printf("|\n");
