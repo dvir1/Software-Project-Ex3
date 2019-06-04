@@ -13,6 +13,7 @@ void start();
 
 /*
  * Read command line from user and execute it
+ * bool firstCommand - indicator of first command after choosing number of fixed cells
  */
 void getCommand(bool firstCommand);
 

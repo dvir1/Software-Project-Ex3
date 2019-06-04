@@ -2,13 +2,24 @@
 #define GAME_H_
 
 #include <stdbool.h>
+#include "MainAux.h"
+
+/*
+ * return a pointer to cell <x,y>
+ */
+Cell* boardCellAccess(int x, int y);
+
+/*
+ * return a pointer to cell <x,y>
+ */
+Cell* solutionCellAccess(int x, int y);
 
 /*
  * print "Exiting...\n" and exit program
  */
 void printExitAndExit();
 
-void CreateBoard(int blockNumRow, int blockNumCol, int numOfFixed);
+void CreateBoard(int blockNumOfRows, int blockNumOfCols, int numOfFixed);
 
 void set(int x, int y, int z);
 
@@ -21,5 +32,9 @@ void restart();
 void exitGame();
 
 bool endGame();
+
+void printBoard();
+
+void invalidCommand();
 
 #endif /* GAME_H_ */

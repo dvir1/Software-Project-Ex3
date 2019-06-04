@@ -3,10 +3,12 @@
 #include "SPBufferset.h"
 
 
-int main() {
+int parserTest() {
+	bool firstCommand = true; /* bool firstCommand - indicator of first command after choosing number of fixed cells */
+
 	SP_BUFF_SET();
 
-	bool firstCommand = true;
+
 	start();
 	while(true) {
 		getCommand(firstCommand);

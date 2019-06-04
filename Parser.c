@@ -84,8 +84,10 @@ void getCommand(bool firstCommand) {
 		firstCommand=false;
 	}
 	fgets(line, 1024, stdin);
-	command = strtok(line, " ");
-	printf("%s\n", command);
+	command = strtok(line, " \t\r\n");
+#ifdef DEBUG
+	printf("%s, %d\n", command, getCommandType(command));
+#endif
 
 	switch (getCommandType(command)) {
 	case Set:
@@ -115,16 +117,18 @@ void getCommand(bool firstCommand) {
 #ifdef DEBUG
 		printf("command is Restart\n");
 #endif
-		restart();
+		exitGame();
+		start();
 		break;
 	case Exit:
 #ifdef DEBUG
 		printf("command is Exit\n");
 #endif
 		exitGame();
+		printExitAndExit();
 		break;
 	default:
-		printf("Error: invalid command\n");
+		invalidCommand();
 		break;
 	}
 
