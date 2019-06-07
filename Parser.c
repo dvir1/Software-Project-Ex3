@@ -1,9 +1,4 @@
-#define DEBUG
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include "Game.h"
+#include "Parser.h"
 
 /*
  * Check whether numOfFixed is between 0 and maxCellNum

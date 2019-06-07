@@ -1,11 +1,4 @@
-#define DEBUG
-#include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include "Game.h"
-#include "MainAux.h"
-#include "Solver.h"
 
 Cell **board;
 Cell **solution;
@@ -64,6 +57,18 @@ void generatorTest(int numOfFixed) {
 			board[(int) (r / 9)][r % 9].fixed = false;
 		}
 }
+
+
+void generateSolution() {
+	int i = 0, j = 0, k = 1;
+
+	for (i = 0; i < 9; i++) {
+			for (k = 1; k <= 9; k++) {
+				j = calcCol(i);
+				solution[i][(j + k - 1) % 9].value = k;
+			}
+		}
+}
 #endif
 /*
  * return a pointer to cell <x,y>
@@ -110,9 +115,11 @@ void CreateBoard(int blockNumOfRows, int blockNumOfCols, int numOfFixed) {
 	for (i=0; i<blockNumOfCells; i++){
 		solution[i] = (Cell*)calloc(blockNumOfCells, sizeof(Cell));
 	}
-	/*generator(board, solution, numOfFixed);*/
+	/*generator(board, solution, numOfCells, blockNumOfCells, numOfEmptyCells);*/
 #ifdef DEBUG
-	generatorTest(numOfFixed);
+	/*generatorTest(numOfFixed);*/
+	generateSolution();
+	generator(board, solution, numOfCells, blockNumOfCells, numOfEmptyCells);
 	printBoard();
 #endif
 	/*printf("CreateBoard params: %d, %d, %d", blockNumRow, blockNumCol, numOfFixed);*/
@@ -129,7 +136,7 @@ void set(int x, int y, int z) {
 		printf("Error: cell is fixed\n");
 		return;
 	}
-	if (!validCellSol(board, cell, x, y, z)){
+	if (!validCellSol(board, blockNumOfCells, blockNumRow, blockNumCol, cell, x, y, z, false)){
 		printf("Error: value is invalid\n");
 		return;
 	}

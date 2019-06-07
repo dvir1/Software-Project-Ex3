@@ -1,8 +1,11 @@
 #ifndef GAME_H_
 #define GAME_H_
 
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
 #include <stdbool.h>
-#include "MainAux.h"
+#include "Solver.h"
 
 /*
  * return a pointer to cell <x,y>
