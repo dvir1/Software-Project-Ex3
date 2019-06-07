@@ -6,10 +6,10 @@ int parserTest() {
 	SP_BUFF_SET();
 
 
-	start();
 	while(true) {
-		getCommand(firstCommand);
-		firstCommand = false;
+		if (firstCommand)
+			start();
+		firstCommand = getCommand(firstCommand);
 	}
     return 0;
 }

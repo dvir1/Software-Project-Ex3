@@ -56,7 +56,8 @@ commandType getCommandType(char* command) {
 /*
  * Read command line from user and execute it
  */
-void getCommand(bool firstCommand) {
+bool getCommand(bool firstCommand) {
+	bool lastCommandInGame = false;
 	char *command;
 	char c, line[1024];
 	int x, y, z;
@@ -113,13 +114,14 @@ void getCommand(bool firstCommand) {
 		printf("command is Restart\n");
 #endif
 		exitGame();
-		start();
+		lastCommandInGame = true;
 		break;
 	case Exit:
 #ifdef DEBUG
 		printf("command is Exit\n");
 #endif
 		exitGame();
+		lastCommandInGame = true;
 		printExitAndExit();
 		break;
 	default:
@@ -127,4 +129,5 @@ void getCommand(bool firstCommand) {
 		break;
 	}
 
+	return lastCommandInGame;
 }
