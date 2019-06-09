@@ -1,33 +1,103 @@
 #include "Solver.h"
+#include "MainAux.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 /* if succeed return true and update the solution
  * else return false and doesn't change solution
  */
-bool backtrack(Cell** board, Cell** solution, SolverType type) {
-	if (board[0][0].value==solution[0][0].value && type==Deterministic)
-		return true;
-	else
-		return false;
+bool backtrack(Cell **board, Cell **solution, SolverType type, int blockNumOfCells, int blockNumRow, int blockNumCol)
+{
+	int i, j, numOfOptions, option;
+	bool success = false;
+	Cell *cell;
+	int options[9] = {0};
+	for (i = 0; i < blockNumOfCells; i++)
+	{
+		for (j = 0; j < blockNumOfCells; j++)
+		{
+			cell = &board[i][j];
+			if (cell->value == 0)
+			{
+				numOfOptions = allValidCellSol(board, options, blockNumOfCells, blockNumRow, blockNumCol, cell, i, j, true);
+				while (numOfOptions > 0)
+				{
+					switch (type)
+					{
+					case Deterministic:
+						option = deterChoice(options);
+						break;
+					case Randomized:
+						option = randomChoice(options, numOfOptions);
+						break;
+					}
+					numOfOptions--;
+					cell->value = option;
+					success = backtrack(board, solution, type, blockNumOfCells, blockNumRow, blockNumCol);
+					if (success)
+					{
+						cell->value = 0;
+						return true;
+					}
+				}
+				cell->value = 0;
+				return false;
+			}
+		}
+	}
+
+	for (i = 0; i < blockNumOfCells; i++)
+	{
+		for (j = 0; j < blockNumOfCells; j++)
+		{
+			solution[i][j].value = board[i][j].value;
+		}
+	}
+	return true;
 }
 
-int deterChoice(int* possibilities) {
-	if (possibilities[0]==1)
-		return 0;
-	else
-		return 0;
+int deterChoice(int *options)
+{
+	int i;
+	for (i = 0; i < 9; i++)
+	{
+		if (options[i] == 1)
+		{
+			options[i] = 0;
+			return (i++);
+		}
+	}
+	return 0;
 }
 
-int randomChoice(int* possibilities) {
-	if (possibilities[0]==1)
-			return 0;
-		else
-			return 0;
+
+int randomChoice(int *options, int numOfOptions)
+
+{
+	int r, i, count = 0;
+	srand(time(NULL));
+	r = rand() % numOfOptions;
+	for (i = 0; i < 9; i++)
+	{
+		if (options[i] == 1)
+		{
+			if (count == r)
+			{
+				options[i] = 0;
+				return (i++);
+			}
+			count++;
+		}
+	}
+	return 0;
 }
 
 /*
  * @pre: options is an array of size 9 and initialized to 0s
  */
-void allValidCellSol(Cell** board, int options[], int blockNumOfCells, int blockNumRows, int blockNumCols, Cell* cell, int x, int y, bool isZeroBased) {
+int allValidCellSol(Cell **board, int options[], int blockNumOfCells, int blockNumRows, int blockNumCols, Cell *cell, int x, int y, bool isZeroBased)
+{
 	/*int a[9] = {1,2,3,4,5,6,7,8,9};
 	int* p=a;
 	if (board[0][0].value==cells[0].value)
@@ -36,18 +106,24 @@ void allValidCellSol(Cell** board, int options[], int blockNumOfCells, int block
 		return p;*/
 
 	int i;
+	int cnt = 0;
 
-	for (i=0; i<9; i++) {
-		if (validCellSol(board, blockNumOfCells, blockNumRows, blockNumCols, cell, x, y, i+1, isZeroBased)==true)
+	for (i = 0; i < 9; i++)
+	{
+		if (validCellSol(board, blockNumOfCells, blockNumRows, blockNumCols, cell, x, y, i + 1, isZeroBased) == true)
 			options[i] = 1;
+		cnt++;
 	}
+
+	return cnt;
 }
 
 /*
  * Generates a board with x empty cells randomly where x=numOfEmptyCells
  * blockNumOfCells is also num of cells in row/column
  */
-void generator(Cell** board, Cell** solution, int numOfCells, int blockNumOfCells, int numOfEmptyCells) {
+void generator(Cell **board, Cell **solution, int numOfCells, int blockNumOfCells, int numOfEmptyCells)
+{
 	/*int temp = board[0][0].value, temp2 = solution[0][0].value;
 	 board[0][0].value = temp;
 	 solution[0][0].value = temp2;
@@ -59,17 +135,20 @@ void generator(Cell** board, Cell** solution, int numOfCells, int blockNumOfCell
 	/* Intializes random number generator */
 	srand(time(NULL));
 
-	for (i = 0; i < blockNumOfCells; i++) {
-		for (j = 0; j < blockNumOfCells; j++) {
+	for (i = 0; i < blockNumOfCells; i++)
+	{
+		for (j = 0; j < blockNumOfCells; j++)
+		{
 			board[i][j].value = solution[i][j].value;
 			board[i][j].fixed = true;
 		}
 	}
 
-	for (k = 0; k < numOfEmptyCells; k++) {
+	for (k = 0; k < numOfEmptyCells; k++)
+	{
 		r = rand() % numOfCells;
-		board[(int) (r / blockNumOfCells)][r % blockNumOfCells].value = 0;
-		board[(int) (r / blockNumOfCells)][r % blockNumOfCells].fixed = false;
+		board[(int)(r / blockNumOfCells)][r % blockNumOfCells].value = 0;
+		board[(int)(r / blockNumOfCells)][r % blockNumOfCells].fixed = false;
 	}
 }
 
@@ -78,7 +157,8 @@ void generator(Cell** board, Cell** solution, int numOfCells, int blockNumOfCell
  * return false otherwise
  * blockNumOfCells is also num of cells in row/column
  */
-bool validCellSol(Cell** board, int blockNumOfCells, int blockNumRows, int blockNumCols, Cell* cell, int x, int y, int z, bool isZeroBased) {
+bool validCellSol(Cell **board, int blockNumOfCells, int blockNumRows, int blockNumCols, Cell *cell, int x, int y, int z, bool isZeroBased)
+{
 	/*x++;
 	y++;
 	z++;
@@ -88,12 +168,13 @@ bool validCellSol(Cell** board, int blockNumOfCells, int blockNumRows, int block
 		return true;*/
 
 	/* if x,y are 1-based, change them to 0-based */
-	if (!isZeroBased) {
+	if (!isZeroBased)
+	{
 		x--;
 		y--;
 	}
 
-	if (!(cell->fixed) && !valueInRow(board, blockNumOfCells, x, y, z) && !valueInColumn(board, blockNumOfCells, x,y,z) && !valueInBlock(board, blockNumRows, blockNumCols, x,y,z))
+	if (!(cell->fixed) && !valueInRow(board, blockNumOfCells, x, y, z) && !valueInColumn(board, blockNumOfCells, x, y, z) && !valueInBlock(board, blockNumRows, blockNumCols, x, y, z))
 		return true;
 	return false;
 }
@@ -104,11 +185,13 @@ bool validCellSol(Cell** board, int blockNumOfCells, int blockNumRows, int block
  * y - row
  * z - value to check
  */
-bool valueInRow(Cell** board, int numOfCellsInRow, int x, int y, int z) {
+bool valueInRow(Cell **board, int numOfCellsInRow, int x, int y, int z)
+{
 	int j;
 
-	for (j=0; j<numOfCellsInRow; j++) {
-		if (board[y][j].value == z && j!=x) /* z in row y in column!=x */
+	for (j = 0; j < numOfCellsInRow; j++)
+	{
+		if (board[y][j].value == z && j != x) /* z in row y in column!=x */
 			return true;
 	}
 	return false;
@@ -120,11 +203,13 @@ bool valueInRow(Cell** board, int numOfCellsInRow, int x, int y, int z) {
  * y - row
  * z - value to check
  */
-bool valueInColumn(Cell** board, int numOfCellsInCol, int x, int y, int z) {
+bool valueInColumn(Cell **board, int numOfCellsInCol, int x, int y, int z)
+{
 	int i;
 
-	for (i=0; i<numOfCellsInCol; i++) {
-		if (board[i][x].value == z && i!=y) /* z in column x in row!=y */
+	for (i = 0; i < numOfCellsInCol; i++)
+	{
+		if (board[i][x].value == z && i != y) /* z in column x in row!=y */
 			return true;
 	}
 	return false;
@@ -136,15 +221,18 @@ bool valueInColumn(Cell** board, int numOfCellsInCol, int x, int y, int z) {
  * y - row
  * z - value to check
  */
-bool valueInBlock(Cell** board, int blockNumRows, int blockNumCols, int x, int y, int z) {
+bool valueInBlock(Cell **board, int blockNumRows, int blockNumCols, int x, int y, int z)
+{
 	int i, j, firstRow, firstCol;
 
-	firstRow=firstRowInBlock(y, blockNumRows); /* index of first row in the block */
-	firstCol=firstColInBlock(x, blockNumCols); /* index of first column in the block */
+	firstRow = firstRowInBlock(y, blockNumRows); /* index of first row in the block */
+	firstCol = firstColInBlock(x, blockNumCols); /* index of first column in the block */
 
-	for(i=firstRow; i<firstRow+blockNumRows; i++) {
-		for(j=firstCol; j<firstCol+blockNumCols; j++) {
-			if (board[i][j].value==z && i!=y && j!=x) /* z in the block */
+	for (i = firstRow; i < firstRow + blockNumRows; i++)
+	{
+		for (j = firstCol; j < firstCol + blockNumCols; j++)
+		{
+			if (board[i][j].value == z && i != y && j != x) /* z in the block */
 				return true;
 		}
 	}
@@ -155,13 +243,15 @@ bool valueInBlock(Cell** board, int blockNumRows, int blockNumCols, int x, int y
 /*
  * @pre: row is 0-based
  */
-int firstRowInBlock(int row, int blockNumRows) {
-	return floor(row/blockNumRows)*blockNumRows;
+int firstRowInBlock(int row, int blockNumRows)
+{
+	return floor(row / blockNumRows) * blockNumRows;
 }
 
 /*
  * @pre: col is 0-based
  */
-int firstColInBlock(int col, int blockNumCols) {
-	return floor(col/blockNumCols)*blockNumCols;
+int firstColInBlock(int col, int blockNumCols)
+{
+	return floor(col / blockNumCols) * blockNumCols;
 }
