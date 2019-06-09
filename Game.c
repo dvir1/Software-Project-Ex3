@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include "MainAux.h"
-#include "Solver.h"
+#include "Game.h"
 
 Cell **board;
 Cell **solution;
@@ -12,8 +8,70 @@ int blockNumCol;
 int numOfCells;
 int blockNumOfCells;
 
-/* 
- * return a pointer to cell <x,y> 
+#ifdef DEBUG
+int calcCol(int i) {
+	int j = 0;
+
+	if (i == 0)
+		j = 0;
+	else if (i == 1)
+		j = 3;
+	else if (i == 2)
+		j = 6;
+	else if (i == 3)
+		j = 1;
+	else if (i == 4)
+		j = 4;
+	else if (i == 5)
+		j = 7;
+	else if (i == 6)
+		j = 2;
+	else if (i == 7)
+		j = 5;
+	else if (i == 8)
+		j = 8;
+
+	return j;
+}
+
+void generatorTest(int numOfFixed) {
+	int i = 0, j = 0, k = 1, l = 0, r = 0;
+
+	/* Intializes random number generator */
+		srand(time(NULL));
+
+	for (i = 0; i < 9; i++) {
+			for (k = 1; k <= 9; k++) {
+				j = calcCol(i);
+				solution[i][(j + k - 1) % 9].value = k;
+				board[i][(j + k - 1) % 9].value = k;
+				board[i][(j + k - 1) % 9].fixed = true;
+				/*board[i][(j + k - 1) % 9].fixed = rand()%2==0?true:false;
+				board[i][(j + k - 1) % 9].value = board[i][(j + k - 1) % 9].fixed==true?k:0;*/
+			}
+		}
+
+	for (l = 0; l < 81-numOfFixed; l++) {
+			r = rand() % 81;
+			board[(int) (r / 9)][r % 9].value = 0;
+			board[(int) (r / 9)][r % 9].fixed = false;
+		}
+}
+
+
+void generateSolution() {
+	int i = 0, j = 0, k = 1;
+
+	for (i = 0; i < 9; i++) {
+			for (k = 1; k <= 9; k++) {
+				j = calcCol(i);
+				solution[i][(j + k - 1) % 9].value = k;
+			}
+		}
+}
+#endif
+/*
+ * return a pointer to cell <x,y>
  */
 Cell* boardCellAccess(int x, int y){
 	/*int row = (y-1)*blockNumOfCells;*/
@@ -23,8 +81,8 @@ Cell* boardCellAccess(int x, int y){
 	return (&(board[row][col]));
 }
 
-/* 
- * return a pointer to cell <x,y> 
+/*
+ * return a pointer to cell <x,y>
  */
 Cell* solutionCellAccess(int x, int y){
 	/*int row = (y-1)*blockNumOfCells;*/
@@ -57,8 +115,15 @@ void CreateBoard(int blockNumOfRows, int blockNumOfCols, int numOfFixed) {
 	for (i=0; i<blockNumOfCells; i++){
 		solution[i] = (Cell*)calloc(blockNumOfCells, sizeof(Cell));
 	}
-	generator(board, solution, numOfFixed);
-	printf("CreateBoard params: %d, %d, %d", blockNumRow, blockNumCol, numOfFixed);
+
+	/*generator(board, solution, numOfCells, blockNumOfCells, numOfEmptyCells);*/
+#ifdef DEBUG
+	/*generatorTest(numOfFixed);*/
+	generateSolution();
+	generator(board, solution, numOfCells, blockNumOfCells, numOfEmptyCells);
+	printBoard();
+#endif
+	/*printf("CreateBoard params: %d, %d, %d", blockNumRow, blockNumCol, numOfFixed);*/
 }
 
 void set(int x, int y, int z) {
@@ -72,8 +137,9 @@ void set(int x, int y, int z) {
 		printf("Error: cell is fixed\n");
 		return;
 	}
-	if (!validCellSol(board, cell, x, y, z)){
-		printf("ErrorL value is invalid\n");
+
+	if (!validCellSol(board, blockNumOfCells, blockNumRow, blockNumCol, cell, x, y, z, false)){
+		printf("Error: value is invalid\n");
 		return;
 	}
 	if (cell->value==0){
@@ -91,7 +157,8 @@ void set(int x, int y, int z) {
 	if (endGame()){
 		printf("Puzzle solved successfully\n");
 	}
-	printf("set params: %d, %d, %d", x, y, z);
+
+	/*printf("set params: %d, %d, %d", x, y, z);*/
 	return;
 }
 
@@ -103,7 +170,8 @@ void hint(int x, int y) {
 	}
 	cell = solutionCellAccess(x, y);
 	printf("Hint: set cell to %d\n", cell->value);
-	printf("set hint: %d, %d", x, y);
+
+	/*printf("set hint: %d, %d", x, y);*/
 	return;
 }
 
@@ -131,6 +199,57 @@ void exitGame() {
 
 bool endGame() {
 	return numOfEmptyCells==0;
+}
+
+void printBoard(){
+	Cell *cell;
+	int cellRow, cellCol;
+	int i, j, k, r, l;
+	int M = blockNumRow; /*num of blocks in a row*/
+	int N = blockNumCol; /*num of cells in a block row*/
+	int C = 3; /*num of chars every cell take to print*/
+	int numOfdashes = M*(N*C+2)+1;
+
+	for (l=0; l<numOfdashes; l++){
+		printf("-");
+	}
+	printf("\n");
+
+	for (k=0; k<N; k++){ /*for every row of blocks*/
+		for (r=0; r<M; r++){ /*for every row of a block*/
+			for (j=0; j<M; j++){ /*for every col of blocks*/
+				printf("| ");
+				for (i=0; i<N; i++){ /*for every col of a block*/
+					cellRow = (k*M)+r+1;
+					cellCol = (j*N)+i+1;
+					cell = boardCellAccess(cellCol, cellRow);
+					if (cell->fixed){
+						printf(".");
+					}
+					else {
+						printf(" ");
+					}
+					if (cell->value==0){
+						printf("  ");
+					}
+					else{
+						printf("%d ", cell->value);
+					}
+				}
+			}
+			printf("|\n");
+		}
+		for (l=0; l<numOfdashes; l++){
+			printf("-");
+		}
+		printf("\n");
+	}
+	return;
+}
+
+void invalidCommand(){
+	printf("Error: invalid command\n");
+	return;
 }
 
 void printBoard(){
