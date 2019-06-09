@@ -17,6 +17,16 @@ Cell* boardCellAccess(int x, int y);
  */
 Cell* solutionCellAccess(int x, int y);
 
+/* 
+ * return a pointer to cell <x,y> 
+ */
+Cell* boardCellAccess(int x, int y);
+
+/* 
+ * return a pointer to cell <x,y> 
+ */
+Cell* solutionCellAccess(int x, int y);
+
 /*
  * print "Exiting...\n" and exit program
  */

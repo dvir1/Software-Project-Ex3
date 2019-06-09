@@ -115,6 +115,7 @@ void CreateBoard(int blockNumOfRows, int blockNumOfCols, int numOfFixed) {
 	for (i=0; i<blockNumOfCells; i++){
 		solution[i] = (Cell*)calloc(blockNumOfCells, sizeof(Cell));
 	}
+
 	/*generator(board, solution, numOfCells, blockNumOfCells, numOfEmptyCells);*/
 #ifdef DEBUG
 	/*generatorTest(numOfFixed);*/
@@ -136,6 +137,7 @@ void set(int x, int y, int z) {
 		printf("Error: cell is fixed\n");
 		return;
 	}
+
 	if (!validCellSol(board, blockNumOfCells, blockNumRow, blockNumCol, cell, x, y, z, false)){
 		printf("Error: value is invalid\n");
 		return;
@@ -155,6 +157,7 @@ void set(int x, int y, int z) {
 	if (endGame()){
 		printf("Puzzle solved successfully\n");
 	}
+
 	/*printf("set params: %d, %d, %d", x, y, z);*/
 	return;
 }
@@ -167,6 +170,7 @@ void hint(int x, int y) {
 	}
 	cell = solutionCellAccess(x, y);
 	printf("Hint: set cell to %d\n", cell->value);
+
 	/*printf("set hint: %d, %d", x, y);*/
 	return;
 }
@@ -245,5 +249,56 @@ void printBoard(){
 
 void invalidCommand(){
 	printf("Error: invalid command\n");
+	return;
+}
+
+void printBoard(){
+	Cell *cell;
+	int cellRow, cellCol;
+	int i, j, k, r, l;
+	int M = blockNumRow; /*num of blocks in a row*/
+	int N = blockNumCol; /*num of cells in a block row*/
+	int C = 3; /*num of chars every cell take to print*/
+	int numOfdashes = M*(N*C+2)+1;
+	
+	for (l=0, l<numOfdashes, l++){
+		printf("-");
+	}
+	printf("\n");
+
+	for (k=0, k<N, k++){ /*for every row of blocks*/
+		for (r=0, r<M, r++){ /*for every row of a block*/
+			for (j=0, j<M, j++){ /*for every col of blocks*/
+				printf("| ");
+				for (i=0; i<N, i++){ /*for every col of a block*/
+					cellRow = (k*M)+r+1;
+					cellCol = (j*N)+i+1;
+					cell = boardCellAccess(cellCol, cellRow);
+					if (cell->fixed){
+						printf(".");
+					}
+					else {
+						printf(" ");
+					}
+					if (cell->value==0){
+						printf("  ");
+					}
+					else{
+						printf("%d ", cell->value);
+					}
+				}
+			}
+			printf("|\n");
+		}
+		for (l=0, l<numOfdashes, l++){
+			printf("-");
+		}
+		printf("\n");
+	}
+	return;
+}
+
+void invalidCommand(){
+	printf("Error: invalid command/n");
 	return;
 }
