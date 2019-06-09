@@ -1,16 +1,15 @@
-#include <stdbool.h>
-#include "Parser.h"
-#include "SPBufferset.h"
+#include "ParserUnitTest.h"
 
+int parserTest() {
+	bool firstCommand = true; /* bool firstCommand - indicator of first command after choosing number of fixed cells */
 
-int main() {
 	SP_BUFF_SET();
 
-	bool firstCommand = true;
-	start();
+
 	while(true) {
-		getCommand(firstCommand);
-		firstCommand = false;
+		if (firstCommand)
+			start();
+		firstCommand = getCommand(firstCommand);
 	}
     return 0;
 }

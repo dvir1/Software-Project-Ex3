@@ -1,9 +1,4 @@
-#define DEBUG
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include "Game.h"
+#include "Parser.h"
 
 /*
  * Check whether numOfFixed is between 0 and maxCellNum
@@ -61,7 +56,8 @@ commandType getCommandType(char* command) {
 /*
  * Read command line from user and execute it
  */
-void getCommand(bool firstCommand) {
+bool getCommand(bool firstCommand) {
+	bool lastCommandInGame = false;
 	char *command;
 	char c, line[1024];
 	int x, y, z;
@@ -84,8 +80,10 @@ void getCommand(bool firstCommand) {
 		firstCommand=false;
 	}
 	fgets(line, 1024, stdin);
-	command = strtok(line, " ");
-	printf("%s\n", command);
+	command = strtok(line, " \t\r\n");
+#ifdef DEBUG
+	printf("%s, %d\n", command, getCommandType(command));
+#endif
 
 	switch (getCommandType(command)) {
 	case Set:
@@ -116,13 +114,14 @@ void getCommand(bool firstCommand) {
 		printf("command is Restart\n");
 #endif
 		exitGame();
-		start();
+		lastCommandInGame = true;
 		break;
 	case Exit:
 #ifdef DEBUG
 		printf("command is Exit\n");
 #endif
 		exitGame();
+		lastCommandInGame = true;
 		printExitAndExit();
 		break;
 	default:
@@ -130,4 +129,5 @@ void getCommand(bool firstCommand) {
 		break;
 	}
 
+	return lastCommandInGame;
 }
