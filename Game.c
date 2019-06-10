@@ -1,5 +1,4 @@
 #include "Game.h"
-#include "Solver.h"
 
 Cell **board;
 Cell **solution;
@@ -113,31 +112,73 @@ void printExitAndExit()
 
 void CreateBoard(int blockNumOfRows, int blockNumOfCols, int numOfFixed)
 {
-	int i;
+	int i, j;
+#ifdef DEBUG
+	printf("Create Board start\n");
+#endif
 	blockNumCol = blockNumOfCols;
 	blockNumRow = blockNumOfRows;
 	blockNumOfCells = blockNumCol * blockNumRow;
 	numOfCells = blockNumOfCells * blockNumOfCells;
 	numOfEmptyCells = numOfCells - numOfFixed;
 	board = (Cell **)calloc(blockNumOfCells, sizeof(Cell *));
+	if (board == 0) { /* calloc failed */
+		printf("Error: calloc has failed\n");
+		exit(0);
+	}
 	for (i = 0; i < blockNumOfCells; i++)
 	{
 		board[i] = (Cell *)calloc(blockNumOfCells, sizeof(Cell));
+		if (board[i] == 0) { /* calloc failed */
+			printf("Error: calloc has failed\n");
+			for (j=0; j<i; j++) {
+				free(board[j]);
+			}
+			free(board);
+			exit(0);
+		}
 	}
 	solution = (Cell **)calloc(blockNumOfCells, sizeof(Cell *));
+	if (solution == 0) { /* calloc failed */
+		printf("Error: calloc has failed\n");
+		for (j=0; j<blockNumOfCells; j++) {
+			free(board[j]);
+		}
+		free(board);
+		exit(0);
+	}
 	for (i = 0; i < blockNumOfCells; i++)
 	{
-		solution[i] = (Cell *)calloc(blockNumOfCells, sizeof(Cell));
+		solution[i] = (Cell *) calloc(blockNumOfCells, sizeof(Cell));
+		if (solution[i] == 0) { /* calloc failed */
+			printf("Error: calloc has failed\n");
+			for (j = 0; j < i; j++) {
+				free(solution[j]);
+			}
+			free(solution);
+			for (j = 0; j < blockNumOfCells; j++) {
+				free(board[j]);
+			}
+			free(board);
+			exit(0);
+		}
 	}
 
-	/*generator(board, solution, numOfCells, blockNumOfCells, numOfEmptyCells);*/
 #ifdef DEBUG
+	printf("memory allocated\n");
 	/*generatorTest(numOfFixed);*/
-	generateSolution();
-	generator(board, solution, numOfCells, blockNumOfCells, numOfEmptyCells);
-	printBoard();
+	/*generateSolution();*/
 #endif
-	/*printf("CreateBoard params: %d, %d, %d", blockNumRow, blockNumCol, numOfFixed);*/
+	backtrack(board, solution, Randomized, blockNumOfCells, blockNumRow, blockNumCol);
+#ifdef DEBUG
+	printf("solution created\n");
+#endif
+	generator(board, solution, numOfCells, blockNumOfCells, numOfEmptyCells);
+#ifdef DEBUG
+	printf("board generated\n");
+	printBoard();
+	printf("CreateBoard params: %d, %d, %d", blockNumRow, blockNumCol, numOfFixed);
+#endif
 }
 
 void set(int x, int y, int z)
@@ -222,6 +263,11 @@ void validate()
 
 void exitGame()
 {
+	int j;
+	for (j = 0; j < blockNumOfCells; j++) {
+		free(board[j]);
+		free(solution[j]);
+	}
 	free(board);
 	free(solution);
 	return;
