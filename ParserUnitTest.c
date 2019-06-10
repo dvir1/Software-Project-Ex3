@@ -1,4 +1,5 @@
 #include "ParserUnitTest.h"
+#include "Parser.h"
 
 int parserTest() {
 	bool firstCommand = true; /* bool firstCommand - indicator of first command after choosing number of fixed cells */

@@ -10,13 +10,13 @@
 /* if succeed return true and update the solution
  * else return false and doesn't change solution
  */
-bool backtrack(Cell** board, Cell** solution, SolverType type);
+bool backtrack(Cell** board, Cell** solution, SolverType type, int blockNumOfCells, int blockNumRows, int blockNumCols);
 
-int deterChoice(int* possibilities);
+int deterChoice(int* options);
 
-int randomChoice(int* possibilities);
+int randomChoice(int* options, int numOfOptions);
 
-void allValidCellSol(Cell** board, int options[], int blockNumOfCells, int blockNumRows, int blockNumCols, Cell* cell, int x, int y, bool isZeroBased);
+int allValidCellSol(Cell** board, int options[], int blockNumOfCells, int blockNumRows, int blockNumCols, Cell* cell, int x, int y, bool isZeroBased);
 
 void generator(Cell** board, Cell** solution, int numOfCells, int blockNumOfCells, int numOfEmptyCells);
 
