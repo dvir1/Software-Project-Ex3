@@ -1,5 +1,4 @@
 #include "Solver.h"
-#include "MainAux.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -9,18 +8,30 @@
  */
 bool backtrack(Cell **board, Cell **solution, SolverType type, int blockNumOfCells, int blockNumRow, int blockNumCol)
 {
-	int i, j, numOfOptions, option;
+	int i, j, numOfOptions, option/*, q*/;
 	bool success = false;
 	Cell *cell;
-	int options[9] = {0};
+	int arr[9] = {0};
+	int *options;
+	options = arr;
+#ifdef DEBUG
+	printf("backtrack variables set\nblockNumOfCells: %d\n", blockNumOfCells);
+#endif
 	for (i = 0; i < blockNumOfCells; i++)
 	{
 		for (j = 0; j < blockNumOfCells; j++)
 		{
+
 			cell = &board[i][j];
 			if (cell->value == 0)
 			{
 				numOfOptions = allValidCellSol(board, options, blockNumOfCells, blockNumRow, blockNumCol, cell, i, j, true);
+#ifdef DEBUG
+	/*scanf("%d", &q);
+	printf("i:%d, j:%d, numOfOptions:%d, options: ", i, j, numOfOptions);
+	printIntArray(options);
+	printf("\n");*/
+#endif
 				while (numOfOptions > 0)
 				{
 					switch (type)
@@ -33,6 +44,9 @@ bool backtrack(Cell **board, Cell **solution, SolverType type, int blockNumOfCel
 						break;
 					}
 					numOfOptions--;
+#ifdef DEBUG
+					/*printf("option: %d\n", option);*/
+#endif
 					cell->value = option;
 					success = backtrack(board, solution, type, blockNumOfCells, blockNumRow, blockNumCol);
 					if (success)
@@ -46,7 +60,9 @@ bool backtrack(Cell **board, Cell **solution, SolverType type, int blockNumOfCel
 			}
 		}
 	}
-
+#ifdef DEBUG
+	/*printf("middle backtrack");*/
+#endif
 	for (i = 0; i < blockNumOfCells; i++)
 	{
 		for (j = 0; j < blockNumOfCells; j++)
@@ -65,7 +81,8 @@ int deterChoice(int *options)
 		if (options[i] == 1)
 		{
 			options[i] = 0;
-			return (i++);
+			i++;
+			return i;
 		}
 	}
 	return 0;
@@ -85,7 +102,8 @@ int randomChoice(int *options, int numOfOptions)
 			if (count == r)
 			{
 				options[i] = 0;
-				return (i++);
+				i++;
+				return i;
 			}
 			count++;
 		}
@@ -95,8 +113,10 @@ int randomChoice(int *options, int numOfOptions)
 
 /*
  * @pre: options is an array of size 9 and initialized to 0s
+ * x - row
+ * y - col
  */
-int allValidCellSol(Cell **board, int options[], int blockNumOfCells, int blockNumRows, int blockNumCols, Cell *cell, int x, int y, bool isZeroBased)
+int allValidCellSol(Cell **board, int *options, int blockNumOfCells, int blockNumRows, int blockNumCols, Cell *cell, int x, int y, bool isZeroBased)
 {
 	/*int a[9] = {1,2,3,4,5,6,7,8,9};
 	int* p=a;
@@ -110,9 +130,10 @@ int allValidCellSol(Cell **board, int options[], int blockNumOfCells, int blockN
 
 	for (i = 0; i < 9; i++)
 	{
-		if (validCellSol(board, blockNumOfCells, blockNumRows, blockNumCols, cell, x, y, i + 1, isZeroBased) == true)
+		if (validCellSol(board, blockNumOfCells, blockNumRows, blockNumCols, cell, y, x, i + 1, isZeroBased) == true) {
 			options[i] = 1;
-		cnt++;
+			cnt++;
+		}
 	}
 
 	return cnt;
@@ -156,6 +177,8 @@ void generator(Cell **board, Cell **solution, int numOfCells, int blockNumOfCell
  * return true if z is a valid solution to cell (x,y)
  * return false otherwise
  * blockNumOfCells is also num of cells in row/column
+ * x - col
+ * y - row
  */
 bool validCellSol(Cell **board, int blockNumOfCells, int blockNumRows, int blockNumCols, Cell *cell, int x, int y, int z, bool isZeroBased)
 {
@@ -245,7 +268,7 @@ bool valueInBlock(Cell **board, int blockNumRows, int blockNumCols, int x, int y
  */
 int firstRowInBlock(int row, int blockNumRows)
 {
-	return floor(row / blockNumRows) * blockNumRows;
+	return (row / blockNumRows) * blockNumRows;
 }
 
 /*
@@ -253,5 +276,5 @@ int firstRowInBlock(int row, int blockNumRows)
  */
 int firstColInBlock(int col, int blockNumCols)
 {
-	return floor(col / blockNumCols) * blockNumCols;
+	return (col / blockNumCols) * blockNumCols;
 }

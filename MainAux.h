@@ -12,4 +12,6 @@ typedef struct {
 	int value;
 } Cell;
 
+void printIntArray(int *array);
+
 #endif /* MAINAUX_H_ */
