@@ -12,20 +12,22 @@ bool isNumInRange(int num, int minNum, int maxNum) {
  * Ask for number of fixed cells and initialize the board
  */
 void start() {
-	int numOfFixed, numOfScanned;
+	int numOfFixed=0, numOfScanned=0;
 
-	while (true) {
+	while (!((numOfScanned==EOF) || (numOfScanned == 1 && isNumInRange(numOfFixed, 0, 80)))) {
 		fflush(stdin);
-		printf("Please enter a number of cells to fill [0-80]:\n");
+		printf("Please enter the number of cells to fill [0-80]:\n");
 		numOfScanned = scanf("%d", &numOfFixed);
-		if (feof(stdin)) {
-			printExitAndExit();
+		if (numOfScanned == 1 && !isNumInRange(numOfFixed, 0, 80)) {
+			printf("Error: invalid number of cells to fill (should be between 0 and 80)\n");
 		}
 #ifdef DEBUG
 		printf("numOfScanned=%d, numOfFixed=%d\n", numOfScanned, numOfFixed);
 #endif
-		if (numOfScanned == 1 && isNumInRange(numOfFixed, 0, 80))
-			break;
+	}
+
+	if (numOfScanned == EOF) {
+		printExitAndExit();
 	}
 
 	CreateBoard(3, 3, numOfFixed);
