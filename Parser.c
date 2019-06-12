@@ -57,6 +57,15 @@ commandType getCommandType(char* command) {
 	return Invalid;
 }
 
+int parseArgument() {
+	char *token;
+	token = strtok(NULL, " ");
+	if (token!=NULL)
+		return atoi(token);
+	else
+		return 0;
+}
+
 /*
  * Read command line from user and execute it
  */
@@ -91,9 +100,9 @@ bool getCommand(bool firstCommand) {
 
 	switch (getCommandType(command)) {
 	case Set:
-		x = atoi(strtok(NULL, " "));
-		y = atoi(strtok(NULL, " "));
-		z = atoi(strtok(NULL, " "));
+		x = parseArgument();
+		y = parseArgument();
+		z = parseArgument();
 #ifdef DEBUG
 		printf("command is Set, x=%d, y=%d, z=%d\n", x, y, z);
 #endif
@@ -105,8 +114,8 @@ bool getCommand(bool firstCommand) {
 		}
 		break;
 	case Hint:
-		x = atoi(strtok(NULL, " "));
-		y = atoi(strtok(NULL, " "));
+		x = parseArgument();
+		y = parseArgument();
 #ifdef DEBUG
 		printf("command is Hint, x=%d, y=%d\n", x, y);
 #endif
