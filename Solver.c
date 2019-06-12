@@ -93,8 +93,14 @@ int randomChoice(int *options, int numOfOptions)
 
 {
 	int r, i, count = 0;
-	srand(time(NULL));
-	r = rand() % numOfOptions;
+
+	if (numOfOptions == 1){
+		r = 0;
+	}
+	else{
+		r = rand() % numOfOptions;
+	}
+
 	for (i = 0; i < 9; i++)
 	{
 		if (options[i] == 1)
@@ -143,7 +149,7 @@ int allValidCellSol(Cell **board, int *options, int blockNumOfCells, int blockNu
  * Generates a board with x empty cells randomly where x=numOfEmptyCells
  * blockNumOfCells is also num of cells in row/column
  */
-void generator(Cell **board, Cell **solution, int numOfCells, int blockNumOfCells, int numOfEmptyCells)
+void generator(Cell **board, Cell **solution, int blockNumOfCells, int numOfFixed)
 {
 	/*int temp = board[0][0].value, temp2 = solution[0][0].value;
 	 board[0][0].value = temp;
@@ -151,25 +157,25 @@ void generator(Cell **board, Cell **solution, int numOfCells, int blockNumOfCell
 	 numOfFixed++;
 	 return;*/
 
-	int i, j, k, r;
+	int i, j, k, randCol, randRow;
 
-	/* Intializes random number generator */
-	srand(time(NULL));
 
 	for (i = 0; i < blockNumOfCells; i++)
 	{
 		for (j = 0; j < blockNumOfCells; j++)
 		{
-			board[i][j].value = solution[i][j].value;
-			board[i][j].fixed = true;
+			board[i][j].value = 0;
+			board[i][j].fixed = false;
 		}
 	}
 
-	for (k = 0; k < numOfEmptyCells; k++)
-	{
-		r = rand() % numOfCells;
-		board[(int)(r / blockNumOfCells)][r % blockNumOfCells].value = 0;
-		board[(int)(r / blockNumOfCells)][r % blockNumOfCells].fixed = false;
+	for (k = 0; k < numOfFixed; k++) {
+		do {
+			randCol = rand() % blockNumOfCells;
+			randRow = rand() % blockNumOfCells;
+		} while (board[randRow][randCol].fixed == true);
+		board[randRow][randCol].value = solution[randRow][randCol].value;
+		board[randRow][randCol].fixed = true;
 	}
 }
 

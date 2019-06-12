@@ -18,7 +18,7 @@ int randomChoice(int* options, int numOfOptions);
 
 int allValidCellSol(Cell** board, int options[], int blockNumOfCells, int blockNumRows, int blockNumCols, Cell* cell, int x, int y, bool isZeroBased);
 
-void generator(Cell** board, Cell** solution, int numOfCells, int blockNumOfCells, int numOfEmptyCells);
+void generator(Cell** board, Cell** solution, int blockNumOfCells, int numOfFixed);
 
 /*
  * return true if z is a valid solution to cell (x,y)

@@ -1,8 +1,9 @@
 #include "ParserUnitTest.h"
 
-int main() {
+/*int main() {*/
 	/*CreateBoard(3,3,20);*/
-	parserTest();
+	/*parserTest();
 
 	return 0;
 }
+*/
