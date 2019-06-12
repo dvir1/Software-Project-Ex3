@@ -4,8 +4,8 @@
  * Check whether numOfFixed is between 0 and maxCellNum
  * Return true if it is
  */
-bool isValidNumOfFixed(int numOfFixed, int maxCellNum) {
-	return (0 <= numOfFixed && numOfFixed <= maxCellNum);
+bool isNumInRange(int num, int minNum, int maxNum) {
+	return (minNum <= num && num <= maxNum);
 }
 
 /*
@@ -15,6 +15,7 @@ void start() {
 	int numOfFixed, numOfScanned;
 
 	while (true) {
+		fflush(stdin);
 		printf("Please enter a number of cells to fill [0-80]:\n");
 		numOfScanned = scanf("%d", &numOfFixed);
 		if (feof(stdin)) {
@@ -23,7 +24,7 @@ void start() {
 #ifdef DEBUG
 		printf("numOfScanned=%d, numOfFixed=%d\n", numOfScanned, numOfFixed);
 #endif
-		if (numOfScanned == 1 && isValidNumOfFixed(numOfFixed, 80))
+		if (numOfScanned == 1 && isNumInRange(numOfFixed, 0, 80))
 			break;
 	}
 
@@ -93,7 +94,9 @@ bool getCommand(bool firstCommand) {
 #ifdef DEBUG
 		printf("command is Set, x=%d, y=%d, z=%d\n", x, y, z);
 #endif
-		set(x, y, z);
+		if (isNumInRange(x, 1, 9) && isNumInRange(y, 1, 9)) {
+			set(x, y, z);
+		}
 		break;
 	case Hint:
 		x = atoi(strtok(NULL, " "));
@@ -101,7 +104,9 @@ bool getCommand(bool firstCommand) {
 #ifdef DEBUG
 		printf("command is Hint, x=%d, y=%d\n", x, y);
 #endif
-		hint(x, y);
+		if (isNumInRange(x, 1, 9) && isNumInRange(y, 1, 9)) {
+			hint(x, y);
+		}
 		break;
 	case Validate:
 #ifdef DEBUG
