@@ -39,9 +39,6 @@ void generatorTest(int numOfFixed)
 {
 	int i = 0, j = 0, k = 1, l = 0, r = 0;
 
-	/* Intializes random number generator */
-	srand(time(NULL));
-
 	for (i = 0; i < 9; i++)
 	{
 		for (k = 1; k <= 9; k++)
@@ -173,10 +170,10 @@ void CreateBoard(int blockNumOfRows, int blockNumOfCols, int numOfFixed)
 #ifdef DEBUG
 	printf("solution created\n");
 #endif
-	generator(board, solution, numOfCells, blockNumOfCells, numOfEmptyCells);
+	generator(board, solution, blockNumOfCells, numOfFixed);
+	printBoard();
 #ifdef DEBUG
 	printf("board generated\n");
-	printBoard();
 	printf("CreateBoard params: %d, %d, %d", blockNumRow, blockNumCol, numOfFixed);
 #endif
 }
