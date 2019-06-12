@@ -32,9 +32,6 @@ void start() {
 	}
 
 	CreateBoard(3, 3, numOfFixed);
-
-	fflush(stdin);
-	fflush(stdout);
 }
 
 typedef enum {
