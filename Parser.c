@@ -59,7 +59,7 @@ commandType getCommandType(char* command) {
 
 int parseArgument() {
 	char *token;
-	token = strtok(NULL, " ");
+	token = strtok(NULL, " \t\r\n");
 	if (token!=NULL)
 		return atoi(token);
 	else
@@ -97,7 +97,8 @@ bool getCommand(bool firstCommand) {
 #ifdef DEBUG
 	printf("%s, %d\n", command, getCommandType(command));
 #endif
-
+	if (command==NULL)
+		return lastCommandInGame;
 	switch (getCommandType(command)) {
 	case Set:
 		x = parseArgument();
