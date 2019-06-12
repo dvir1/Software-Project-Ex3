@@ -1,13 +1,11 @@
 CC = gcc
-OBJS = Tester.o ParserUnitTest.o Parser.o Game.o Solver.o MainAux.o
+OBJS = main.o Parser.o Game.o Solver.o MainAux.o
 EXEC = sudoku
 COMP_FLAG = -ansi -Wall -Wextra -Werror -pedantic-errors
 
 $(EXEC): $(OBJS)
 	$(CC) $(OBJS) -o $@
-Tester.o: Tester.c Parser.h SPBufferset.h
-	$(CC) $(COMP_FLAG) -c $*.c
-ParserUnitTest.o: ParserUnitTest.c ParserUnitTest.h
+main.o: main.c Parser.h SPBufferset.h
 	$(CC) $(COMP_FLAG) -c $*.c
 Parser.o: Parser.c Parser.h
 	$(CC) $(COMP_FLAG) -c $*.c

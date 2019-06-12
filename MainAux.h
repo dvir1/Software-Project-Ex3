@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-#define DEBUG
+/*#define DEBUG*/
 
 typedef enum {Deterministic, Randomized} SolverType;
 
