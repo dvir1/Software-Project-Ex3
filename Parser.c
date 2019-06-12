@@ -16,6 +16,7 @@ void start() {
 
 	while (!((numOfScanned==EOF) || (numOfScanned == 1 && isNumInRange(numOfFixed, 0, 80)))) {
 		fflush(stdin);
+		fflush(stdout);
 		printf("Please enter the number of cells to fill [0-80]:\n");
 		numOfScanned = scanf("%d", &numOfFixed);
 		if (numOfScanned == 1 && !isNumInRange(numOfFixed, 0, 80)) {
@@ -31,6 +32,9 @@ void start() {
 	}
 
 	CreateBoard(3, 3, numOfFixed);
+
+	fflush(stdin);
+	fflush(stdout);
 }
 
 typedef enum {
@@ -99,6 +103,9 @@ bool getCommand(bool firstCommand) {
 		if (isNumInRange(x, 1, 9) && isNumInRange(y, 1, 9)) {
 			set(x, y, z);
 		}
+		else {
+			invalidCommand();
+		}
 		break;
 	case Hint:
 		x = atoi(strtok(NULL, " "));
@@ -108,6 +115,9 @@ bool getCommand(bool firstCommand) {
 #endif
 		if (isNumInRange(x, 1, 9) && isNumInRange(y, 1, 9)) {
 			hint(x, y);
+		}
+		else {
+			invalidCommand();
 		}
 		break;
 	case Validate:
