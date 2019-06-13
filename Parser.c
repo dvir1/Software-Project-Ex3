@@ -1,7 +1,7 @@
 #include "Parser.h"
 
 /*
- * Check whether numOfFixed is between 0 and maxCellNum
+ * Check whether numOfFixed is between minNum and maxNum
  * Return true if it is
  */
 bool isNumInRange(int num, int minNum, int maxNum) {
@@ -22,9 +22,6 @@ void start() {
 		if (numOfScanned == 1 && !isNumInRange(numOfFixed, 0, 80)) {
 			printf("Error: invalid number of cells to fill (should be between 0 and 80)\n");
 		}
-#ifdef DEBUG
-		printf("numOfScanned=%d, numOfFixed=%d\n", numOfScanned, numOfFixed);
-#endif
 	}
 
 	if (numOfScanned == EOF) {
@@ -34,10 +31,16 @@ void start() {
 	CreateBoard(3, 3, numOfFixed);
 }
 
+/*
+ * enum of command types as described in PDF
+ */
 typedef enum {
 	Set, Hint, Validate, Restart, Exit, Invalid
 } commandType;
 
+/*
+ * identify the command type
+ */
 commandType getCommandType(char* command) {
 	if (strcmp(command, "set") == 0) {
 		return Set;
@@ -57,6 +60,9 @@ commandType getCommandType(char* command) {
 	return Invalid;
 }
 
+/*
+ * get arguments of command from user
+ */
 int parseArgument() {
 	char *token;
 	token = strtok(NULL, " \t\r\n");
@@ -80,7 +86,7 @@ bool getCommand(bool firstCommand) {
 	/* init command*/
 	command = NULL;
 
-	/* we have to use x,y,z */
+	/* we have to use x,y,z. otherwise it makes an error of unused variables */
 	x = 0;
 	y = 0;
 	z = 0;
@@ -97,12 +103,11 @@ bool getCommand(bool firstCommand) {
 			x=0;
 		firstCommand=false;
 	}
+
+	/* check for error in input */
 	fgetsRetVal = fgets(line, 1024, stdin);
 	if (fgetsRetVal != NULL) {
 		command = strtok(line, " \t\r\n");
-#ifdef DEBUG
-		printf(", command:%s,\n", command);
-#endif
 	}
 	else {
 		if (feof(stdin))
@@ -114,13 +119,12 @@ bool getCommand(bool firstCommand) {
 	}
 	if (command==NULL)
 		return lastCommandInGame;
+
+	/* execute the command */
 	switch (getCommandType(command)) {
 	case Hint:
 		x = parseArgument();
 		y = parseArgument();
-#ifdef DEBUG
-		printf("command is Hint, x=%d, y=%d\n", x, y);
-#endif
 		if (isNumInRange(x, 1, 9) && isNumInRange(y, 1, 9)) {
 			hint(x, y);
 		}
@@ -132,9 +136,6 @@ bool getCommand(bool firstCommand) {
 		x = parseArgument();
 		y = parseArgument();
 		z = parseArgument();
-#ifdef DEBUG
-		printf("command is Set, x=%d, y=%d, z=%d\n", x, y, z);
-#endif
 		if (isNumInRange(x, 1, 9) && isNumInRange(y, 1, 9)) {
 			set(x, y, z);
 		}
@@ -143,22 +144,13 @@ bool getCommand(bool firstCommand) {
 		}
 		break;
 	case Validate:
-#ifdef DEBUG
-		printf("command is Validate\n");
-#endif
 		validate();
 		break;
 	case Restart:
-#ifdef DEBUG
-		printf("command is Restart\n");
-#endif
 		exitGame();
 		lastCommandInGame = true;
 		break;
 	case Exit:
-#ifdef DEBUG
-		printf("command is Exit\n");
-#endif
 		exitGame();
 		lastCommandInGame = true;
 		printExitAndExit();

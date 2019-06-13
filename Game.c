@@ -8,81 +8,13 @@ int blockNumCol;
 int numOfCells;
 int blockNumOfCells;
 
-#ifdef DEBUG
-int calcCol(int i)
-{
-	int j = 0;
-
-	if (i == 0)
-		j = 0;
-	else if (i == 1)
-		j = 3;
-	else if (i == 2)
-		j = 6;
-	else if (i == 3)
-		j = 1;
-	else if (i == 4)
-		j = 4;
-	else if (i == 5)
-		j = 7;
-	else if (i == 6)
-		j = 2;
-	else if (i == 7)
-		j = 5;
-	else if (i == 8)
-		j = 8;
-
-	return j;
-}
-
-void generatorTest(int numOfFixed)
-{
-	int i = 0, j = 0, k = 1, l = 0, r = 0;
-
-	for (i = 0; i < 9; i++)
-	{
-		for (k = 1; k <= 9; k++)
-		{
-			j = calcCol(i);
-			solution[i][(j + k - 1) % 9].value = k;
-			board[i][(j + k - 1) % 9].value = k;
-			board[i][(j + k - 1) % 9].fixed = true;
-			/*board[i][(j + k - 1) % 9].fixed = rand()%2==0?true:false;
-				board[i][(j + k - 1) % 9].value = board[i][(j + k - 1) % 9].fixed==true?k:0;*/
-		}
-	}
-
-	for (l = 0; l < 81 - numOfFixed; l++)
-	{
-		r = rand() % 81;
-		board[(int)(r / 9)][r % 9].value = 0;
-		board[(int)(r / 9)][r % 9].fixed = false;
-	}
-}
-
-void generateSolution()
-{
-	int i = 0, j = 0, k = 1;
-
-	for (i = 0; i < 9; i++)
-	{
-		for (k = 1; k <= 9; k++)
-		{
-			j = calcCol(i);
-			solution[i][(j + k - 1) % 9].value = k;
-		}
-	}
-}
-#endif
 /*
  * return a pointer to cell <x,y>
  */
 Cell *boardCellAccess(int x, int y)
 {
-	/*int row = (y-1)*blockNumOfCells;*/
 	int row = y - 1;
 	int col = x - 1;
-	/*return (&(board[row+col]));*/
 	return (&(board[row][col]));
 }
 
@@ -91,10 +23,8 @@ Cell *boardCellAccess(int x, int y)
  */
 Cell *solutionCellAccess(int x, int y)
 {
-	/*int row = (y-1)*blockNumOfCells;*/
 	int row = y - 1;
 	int col = x - 1;
-	/*return (&(solution[row+col]));*/
 	return (&(solution[row][col]));
 }
 
@@ -107,12 +37,13 @@ void printExitAndExit()
 	exit(0);
 }
 
+/*
+ * create the board and print it
+ */
 void CreateBoard(int blockNumOfRows, int blockNumOfCols, int numOfFixed)
 {
 	int i, j;
-#ifdef DEBUG
-	printf("Create Board start\n");
-#endif
+
 	blockNumCol = blockNumOfCols;
 	blockNumRow = blockNumOfRows;
 	blockNumOfCells = blockNumCol * blockNumRow;
@@ -161,23 +92,18 @@ void CreateBoard(int blockNumOfRows, int blockNumOfCols, int numOfFixed)
 		}
 	}
 
-#ifdef DEBUG
-	printf("memory allocated\n");
-	/*generatorTest(numOfFixed);*/
-	/*generateSolution();*/
-#endif
+
+	/*
+	 * generate solution and board, then print the board
+	 */
 	backtrack(board, solution, Randomized, blockNumOfCells, blockNumRow, blockNumCol);
-#ifdef DEBUG
-	printf("solution created\n");
-#endif
 	generator(board, solution, blockNumOfCells, numOfFixed);
 	printBoard();
-#ifdef DEBUG
-	printf("board generated\n");
-	printf("CreateBoard params: %d, %d, %d", blockNumRow, blockNumCol, numOfFixed);
-#endif
 }
 
+/*
+ * make set move
+ */
 void set(int x, int y, int z)
 {
 	Cell *cell;
@@ -219,10 +145,12 @@ void set(int x, int y, int z)
 		printf("Puzzle solved successfully\n");
 	}
 
-	/*printf("set params: %d, %d, %d", x, y, z);*/
 	return;
 }
 
+/*
+ * make hint move
+ */
 void hint(int x, int y)
 {
 	Cell *cell;
@@ -234,10 +162,12 @@ void hint(int x, int y)
 	cell = solutionCellAccess(x, y);
 	printf("Hint: set cell to %d\n", cell->value);
 
-	/*printf("set hint: %d, %d", x, y);*/
 	return;
 }
 
+/*
+ * make validate move, validate the board
+ */
 void validate()
 {
 	bool success;
@@ -258,6 +188,9 @@ void validate()
 	return;
 }
 
+/*
+ * make exit move, exit the game
+ */
 void exitGame()
 {
 	int j;
@@ -270,11 +203,17 @@ void exitGame()
 	return;
 }
 
+/*
+ * check if game ended
+ */
 bool endGame()
 {
 	return numOfEmptyCells == 0;
 }
 
+/*
+ * print the board
+ */
 void printBoard()
 {
 	Cell *cell;
@@ -332,6 +271,9 @@ void printBoard()
 	return;
 }
 
+/*
+ * print invalid command
+ */
 void invalidCommand()
 {
 	printf("Error: invalid command\n");
