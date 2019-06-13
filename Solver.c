@@ -3,17 +3,22 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-/* if succeed return true and update the solution
+/* 
+ * try to solve the Sudoku puzzle using the recursive Sudoku backtracking algorithm.
+ * if @param type==Deterministic - deterministic backtraking 
+ * if @param type==Randomized - randomized backtracking 
+ * if succeed return true and update the solution
  * else return false and doesn't change solution
  */
 bool backtrack(Cell **board, Cell **solution, SolverType type, int blockNumOfCells, int blockNumRow, int blockNumCol)
 {
-	int i, j, numOfOptions, option/*, q*/;
+	int i, j, numOfOptions, option /*, q*/;
 	bool success = false;
 	Cell *cell;
 	int arr[9] = {0};
 	int *options;
 	options = arr;
+
 	for (i = 0; i < blockNumOfCells; i++)
 	{
 		for (j = 0; j < blockNumOfCells; j++)
@@ -23,6 +28,7 @@ bool backtrack(Cell **board, Cell **solution, SolverType type, int blockNumOfCel
 			if (cell->value == 0)
 			{
 				numOfOptions = allValidCellSol(board, options, blockNumOfCells, blockNumRow, blockNumCol, cell, i, j, true);
+
 				while (numOfOptions > 0)
 				{
 					switch (type)
@@ -48,6 +54,7 @@ bool backtrack(Cell **board, Cell **solution, SolverType type, int blockNumOfCel
 			}
 		}
 	}
+
 	for (i = 0; i < blockNumOfCells; i++)
 	{
 		for (j = 0; j < blockNumOfCells; j++)
@@ -58,6 +65,10 @@ bool backtrack(Cell **board, Cell **solution, SolverType type, int blockNumOfCel
 	return true;
 }
 
+/*
+ * @param options = binary array[9]
+ * @ret i++ if i is the first such that options[i]==1 and than options[i]=0
+ */
 int deterChoice(int *options)
 {
 	int i;
@@ -73,16 +84,21 @@ int deterChoice(int *options)
 	return 0;
 }
 
-
+/*
+ * @param options = binary array[9]
+ * @ret i++ for a random i such that options[i]==1 and than options[i]=0
+ */
 int randomChoice(int *options, int numOfOptions)
 
 {
 	int r, i, count = 0;
 
-	if (numOfOptions == 1){
+	if (numOfOptions == 1)
+	{
 		r = 0;
 	}
-	else{
+	else
+	{
 		r = rand() % numOfOptions;
 	}
 
@@ -115,7 +131,8 @@ int allValidCellSol(Cell **board, int *options, int blockNumOfCells, int blockNu
 
 	for (i = 0; i < 9; i++)
 	{
-		if (validCellSol(board, blockNumOfCells, blockNumRows, blockNumCols, cell, y, x, i + 1, isZeroBased) == true) {
+		if (validCellSol(board, blockNumOfCells, blockNumRows, blockNumCols, cell, y, x, i + 1, isZeroBased) == true)
+		{
 			options[i] = 1;
 			cnt++;
 		}
@@ -133,7 +150,6 @@ void generator(Cell **board, Cell **solution, int blockNumOfCells, int numOfFixe
 
 	int i, j, k, randCol, randRow;
 
-
 	for (i = 0; i < blockNumOfCells; i++)
 	{
 		for (j = 0; j < blockNumOfCells; j++)
@@ -143,8 +159,10 @@ void generator(Cell **board, Cell **solution, int blockNumOfCells, int numOfFixe
 		}
 	}
 
-	for (k = 0; k < numOfFixed; k++) {
-		do {
+	for (k = 0; k < numOfFixed; k++)
+	{
+		do
+		{
 			randCol = rand() % blockNumOfCells;
 			randRow = rand() % blockNumOfCells;
 		} while (board[randRow][randCol].fixed == true);
@@ -169,7 +187,7 @@ bool validCellSol(Cell **board, int blockNumOfCells, int blockNumRows, int block
 		y--;
 	}
 
-	if (!(cell->fixed) && z==0)
+	if (!(cell->fixed) && z == 0)
 		return true;
 	if (!(cell->fixed) && !valueInRow(board, blockNumOfCells, x, y, z) && !valueInColumn(board, blockNumOfCells, x, y, z) && !valueInBlock(board, blockNumRows, blockNumCols, x, y, z))
 		return true;
