@@ -203,6 +203,8 @@ bool validCellSol(Cell **board, int blockNumOfCells, int blockNumRows, int block
 		y--;
 	}
 
+	if (!(cell->fixed) && z==0)
+		return true;
 	if (!(cell->fixed) && !valueInRow(board, blockNumOfCells, x, y, z) && !valueInColumn(board, blockNumOfCells, x, y, z) && !valueInBlock(board, blockNumRows, blockNumCols, x, y, z))
 		return true;
 	return false;

@@ -72,8 +72,13 @@ int parseArgument() {
 bool getCommand(bool firstCommand) {
 	bool lastCommandInGame = false;
 	char *command;
+	char *fgetsRetVal;
+	char exitStr[] = "exit";
 	char c, line[1024];
 	int x, y, z;
+
+	/* init command*/
+	command = NULL;
 
 	/* we have to use x,y,z */
 	x = 0;
@@ -92,14 +97,37 @@ bool getCommand(bool firstCommand) {
 			x=0;
 		firstCommand=false;
 	}
-	fgets(line, 1024, stdin);
-	command = strtok(line, " \t\r\n");
+	fgetsRetVal = fgets(line, 1024, stdin);
+	if (fgetsRetVal != NULL) {
+		command = strtok(line, " \t\r\n");
 #ifdef DEBUG
-	printf("%s, %d\n", command, getCommandType(command));
+		printf(", command:%s,\n", command);
 #endif
+	}
+	else {
+		if (feof(stdin))
+			command = exitStr;
+		else if (ferror(stdin)) {
+			printf("Error: fgets has failed\n");
+			exit(0);
+		}
+	}
 	if (command==NULL)
 		return lastCommandInGame;
 	switch (getCommandType(command)) {
+	case Hint:
+		x = parseArgument();
+		y = parseArgument();
+#ifdef DEBUG
+		printf("command is Hint, x=%d, y=%d\n", x, y);
+#endif
+		if (isNumInRange(x, 1, 9) && isNumInRange(y, 1, 9)) {
+			hint(x, y);
+		}
+		else {
+			invalidCommand();
+		}
+		break;
 	case Set:
 		x = parseArgument();
 		y = parseArgument();
@@ -109,19 +137,6 @@ bool getCommand(bool firstCommand) {
 #endif
 		if (isNumInRange(x, 1, 9) && isNumInRange(y, 1, 9)) {
 			set(x, y, z);
-		}
-		else {
-			invalidCommand();
-		}
-		break;
-	case Hint:
-		x = parseArgument();
-		y = parseArgument();
-#ifdef DEBUG
-		printf("command is Hint, x=%d, y=%d\n", x, y);
-#endif
-		if (isNumInRange(x, 1, 9) && isNumInRange(y, 1, 9)) {
-			hint(x, y);
 		}
 		else {
 			invalidCommand();
